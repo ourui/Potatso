@@ -4,21 +4,23 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
-	<key>com.apple.developer.icloud-container-identifiers</key>
+	<key>com.apple.developer.networking.networkextension</key>
 	<array>
-		<string>iCloud.$(CFBundleIdentifier)</string>
+		<string>app-proxy-provider</string>
+		<string>content-filter-provider</string>
+		<string>packet-tunnel-provider</string>
 	</array>
-	<key>com.apple.developer.icloud-services</key>
+	<key>com.apple.developer.networking.vpn.api</key>
 	<array>
-		<string>CloudKit</string>
+		<string>allow-vpn</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.io.wasin.potatso</string>
+		<string>group.pp.dev</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)io.wasin.potatso</string>
+		<string>$(AppIdentifierPrefix)com.pp.dev</string>
 	</array>
 </dict>
 </plist>
