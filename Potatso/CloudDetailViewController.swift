@@ -32,10 +32,10 @@ class CloudDetailViewController: UIViewController, UITableViewDataSource, UITabl
         navigationItem.title = "Detail".localized()
         loadData()
         if isExist(ruleSet.uuid) {
-            subscribeButton.setTitle("Unsubscribe".localized(), for: UIControlState())
+            subscribeButton.setTitle("Unsubscribe".localized(), for: UIControl.State())
             subscribeButton.backgroundColor = "FF5E3B".color
         }else {
-            subscribeButton.setTitle("Subscribe".localized(), for: UIControlState())
+            subscribeButton.setTitle("Subscribe".localized(), for: UIControl.State())
             subscribeButton.backgroundColor = "1E96E2".color
         }
     }
@@ -51,7 +51,7 @@ class CloudDetailViewController: UIViewController, UITableViewDataSource, UITabl
             if response.result.isFailure {
                 // Fail
                 let errDesc = response.result.error?.localizedDescription ?? ""
-                self.showTextHUD((errDesc.characters.count > 0 ? "\(errDesc)" : "Unkown error".localized()), dismissAfterDelay: 1.5)
+                self.showTextHUD((!errDesc.isEmpty ? "\(errDesc)" : "Unkown error".localized()), dismissAfterDelay: 1.5)
             }else {
                 guard let result = response.result.value else {
                     return
@@ -64,10 +64,10 @@ class CloudDetailViewController: UIViewController, UITableViewDataSource, UITabl
     }
 
     func isExist(_ uuid: String) -> Bool {
-        return defaultRealm.objects(RuleSet).filter("uuid == '\(uuid)' && deleted == false").count > 0
+        return defaultRealm.objects(RuleSet.self).filter("uuid == '\(uuid)' && deleted == false").count > 0
     }
 
-    func subscribe() {
+    @objc func subscribe() {
         let uuid = ruleSet.uuid
         if isExist(uuid) {
             do {
@@ -140,7 +140,7 @@ class CloudDetailViewController: UIViewController, UITableViewDataSource, UITabl
         case 0:
             return 0.01
         default:
-            return UITableViewAutomaticDimension
+            return UITableView.automaticDimension
         }
     }
 
@@ -172,13 +172,13 @@ class CloudDetailViewController: UIViewController, UITableViewDataSource, UITabl
         v.tableFooterView = UIView()
         v.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 0.01))
         v.separatorStyle = .singleLine
-        v.rowHeight = UITableViewAutomaticDimension
+        v.rowHeight = UITableView.automaticDimension
         v.estimatedRowHeight = rowHeight
         return v
     }()
 
     lazy var activityIndicator: UIActivityIndicatorView = {
-        let v = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        let v = UIActivityIndicatorView(style: .gray)
         v.hidesWhenStopped = true
         return v
     }()
@@ -186,7 +186,7 @@ class CloudDetailViewController: UIViewController, UITableViewDataSource, UITabl
     lazy var subscribeButton: UIButton = {
         let v = UIButton(frame: CGRect.zero)
         v.addTarget(self, action: #selector(subscribe), for: .touchUpInside)
-        v.setTitleColor(UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
+        v.setTitleColor(UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControl.State())
         return v
     }()
 

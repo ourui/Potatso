@@ -39,7 +39,7 @@ class DashboardVC: FormViewController {
         timer = nil
     }
 
-    func onTime() {
+    @objc func onTime() {
         handleRefreshUI()
     }
 
@@ -74,7 +74,7 @@ class DashboardVC: FormViewController {
         }
         <<< LabelRow() {
             $0.title = "Up Time".localized()
-            if Manager.sharedManager.vpnStatus == .on {
+            if Manager.sharedManager.vpnStatus == VPNStatus.on {
                 if let time = Settings.shared().startTime {
                     //let flags = NSCalendar.Unit(rawValue: UInt.max)
                     //let difference = Calendar.current.components(flags, fromDate: time, toDate: Date(), options: NSCalendar.Options.MatchFirst)

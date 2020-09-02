@@ -9,7 +9,7 @@
 #import "ProxyManager.h"
 #import <ShadowPath/ShadowPath.h>
 #import <netinet/in.h>
-#import "PotatsoBase.h"
+#import <PotatsoBase/PotatsoBase.h>
 
 @interface ProxyManager ()
 @property (nonatomic) BOOL socksProxyRunning;

@@ -56,6 +56,10 @@
 		</array>
 		<key>didFinishLaunchingWithOptions</key>
 		<array>
+            <dict>
+                <key>object</key>
+                <string>Potatso.UIManager</string>
+            </dict>
 			<dict>
 				<key>object</key>
 				<string>Potatso.AppInitializer</string>
@@ -63,10 +67,6 @@
 			<dict>
 				<key>object</key>
 				<string>Potatso.DataInitializer</string>
-			</dict>
-			<dict>
-				<key>object</key>
-				<string>Potatso.UIManager</string>
 			</dict>
 			<dict>
 				<key>object</key>

@@ -15,15 +15,16 @@ open class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     open var window: UIWindow?
     
-    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    open func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = UIColor.white
         window?.makeKeyAndVisible()
         appConfig.loadConfig("config.plist")
         if let lifeCycleItems = appConfig.lifeCycleConfig[LifeCycleKey.didFinishLaunchingWithOptions] {
             for item in lifeCycleItems{
-                item.object?.application?(application, didFinishLaunchingWithOptions: launchOptions)
+                if let protocol_ = item.object{
+                    protocol_.application!(application, didFinishLaunchingWithOptions: launchOptions)
+                }
             }
         }
         return true
@@ -95,7 +96,7 @@ open class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    open func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+    open func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         var handled = false
         if let lifeCycleItems = appConfig.lifeCycleConfig[LifeCycleKey.openURL] {
             for item in lifeCycleItems{

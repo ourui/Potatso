@@ -6,7 +6,6 @@
 //  Copyright © 2016 TouchingApp. All rights reserved.
 //
 
-
 import PotatsoBase
 import PotatsoModel
 import RealmSwift
@@ -35,7 +34,7 @@ public let kProxyServiceVPNStatusNotification = "kProxyServiceVPNStatusNotificat
 
 open class Manager {
     
-    open static let sharedManager = Manager()
+    public static let sharedManager = Manager()
     
     open fileprivate(set) var vpnStatus = VPNStatus.off {
         didSet {
@@ -43,7 +42,7 @@ open class Manager {
         }
     }
     
-    open let wormhole = MMWormhole(applicationGroupIdentifier: Potatso.sharedGroupIdentifier(), optionalDirectory: "wormhole")
+    public let wormhole = MMWormhole(applicationGroupIdentifier: Potatso.sharedGroupIdentifier(), optionalDirectory: "wormhole")
 
     var observerAdded: Bool = false
     
@@ -233,11 +232,12 @@ extension Manager {
     
     func generateGeneralConfig() throws {
         let confURL = Potatso.sharedGeneralConfUrl()
-        let json: NSDictionary = ["dns": defaultConfigGroup.dns ?? ""]
+        let json: NSDictionary = ["dns": defaultConfigGroup.dns ]
         try json.jsonString()?.write(to: confURL, atomically: true, encoding: String.Encoding.utf8)
     }
     
     func generateSocksConfig() throws {
+        /*
         let root = NSXMLElement.element(withName: "antinatconfig") as! NSXMLElement
         let interface = NSXMLElement.element(withName: "interface", children: nil, attributes: [NSXMLNode.attribute(withName: "value", stringValue: "127.0.0.1") as! DDXMLNode]) as! NSXMLElement
         root.addChild(interface)
@@ -277,6 +277,7 @@ extension Manager {
         
         let socksConf = root.xmlString
         try socksConf.write(to: Potatso.sharedSocksConfUrl(), atomically: true, encoding: String.Encoding.utf8)
+         */
     }
     
     func generateShadowsocksConfig() throws {

@@ -12,15 +12,8 @@ import CloudKit
 
 class NotificationHandler: NSObject, AppLifeCycleProtocol {
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         configPush()
-        if let launchOptions = launchOptions, let userInfo = launchOptions[UIApplicationLaunchOptionsKey.remoteNotification] as? [AnyHashable: Any], let origin = userInfo["origin"] as? String {
-            if origin == "helpshift" {
-                if let rootVC = application.keyWindow?.rootViewController {
-                    HelpshiftCore.handleRemoteNotification(userInfo, with: rootVC)
-                }
-            }
-        }
         return true
     }
 
@@ -36,23 +29,12 @@ class NotificationHandler: NSObject, AppLifeCycleProtocol {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         DDLogInfo("didRegisterForRemoteNotificationsWithDeviceToken: \(deviceToken.hexString())")
-        HelpshiftCore.registerDeviceToken(deviceToken)
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if let origin = userInfo["origin"] as? String {
-            if origin == "helpshift" {
-                DDLogInfo("received a helpshift notification")
-                if let rootVC = application.keyWindow?.rootViewController {
-                    HelpshiftCore.handleRemoteNotification(userInfo, with: rootVC)
-                }
-                completionHandler(.newData)
-                return
-            }
-        }
         if let dict = userInfo as? [String: NSObject] {
             let ckNotification = CKNotification(fromRemoteNotificationDictionary: dict)
-            if ckNotification.subscriptionID == potatsoSubscriptionId {
+            if ckNotification?.subscriptionID == potatsoSubscriptionId {
                 DDLogInfo("received a CKNotification")
                 SyncManager.shared.sync()
             }

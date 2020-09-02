@@ -1,4 +1,4 @@
-source 'https://github.com/CocoaPods/Specs.git'
+#source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '9.0'
 use_frameworks!
@@ -34,7 +34,7 @@ target "Potatso" do
     pod 'AsyncSwift'
     pod 'SwiftColor'
     pod 'Appirater'
-    pod 'Eureka', :path => "./Library/Eureka/"
+    pod 'Eureka'
     pod 'MBProgressHUD'
     pod 'CallbackURLKit', :path => "./Library/CallbackURLKit"
     pod 'ICDMaterialActivityIndicatorView', '~> 0.1.0'
@@ -43,9 +43,9 @@ target "Potatso" do
     pod 'ISO8601DateFormatter', '~> 0.8'
     pod 'Alamofire'
     pod 'ObjectMapper'
-    pod 'CocoaLumberjack/Swift', '~> 3.0.0'
+    pod 'CocoaLumberjack/Swift'
     pod 'Helpshift', '5.6.1'
-    pod 'PSOperations', '~> 3.0.0'
+    pod 'PSOperations'
     pod 'LogglyLogger-CocoaLumberjack', '~> 3.0'
     tunnel
     library

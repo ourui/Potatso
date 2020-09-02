@@ -15,13 +15,13 @@ typealias waDateFormatter = ISO8601DateFormatter
 
 struct API {
 
-//    static let URL = "http://192.168.2.217:8000/api/"
-    static let URL = "https://api.potatso.com/"
-
+    // Use your own API
+    static let URL = "http://192.168.2.217:8000/api/"
+    
     enum Path {
         case ruleSets
         case ruleSet(String)
-        case ruleSetListDetail()
+        case ruleSetListDetail(String)
 
         var url: String {
             let path: String
@@ -30,7 +30,7 @@ struct API {
                 path = "rulesets"
             case .ruleSet(let uuid):
                 path = "ruleset/\(uuid)"
-            case .ruleSetListDetail():
+            case .ruleSetListDetail(_):
                 path = "rulesets/detail"
             }
             return API.URL + path
@@ -49,7 +49,7 @@ struct API {
 
     static func updateRuleSetListDetail(_ uuids: [String], callback: @escaping  (Alamofire.DataResponse<[RuleSet]>) -> Void) {
         DDLogVerbose("API.updateRuleSetListDetail ===> uuids: \(uuids)")
-        _ = Alamofire.request(Path.ruleSetListDetail().url, method: .post, parameters: ["uuids": uuids], encoding: JSONEncoding.default).responseArray(completionHandler: callback)
+        _ = Alamofire.request(Path.ruleSetListDetail("").url, method: .post, parameters: ["uuids": uuids], encoding: JSONEncoding.default).responseArray(completionHandler: callback)
     }
 
 }
@@ -62,7 +62,8 @@ extension RuleSet: Mappable {
             return
         }
         var rules: [Rule] = []
-        if let parsedObject:[Rule] = Mapper<Rule>().mapArray(JSONArray: rulesJSON as! [[String : Any]]){
+        let parsedObject = Mapper<Rule>().mapArray(JSONArray: rulesJSON as! [[String : Any]])
+        if (parsedObject.count>0){
             rules.append(contentsOf: parsedObject)
         }
         self.rules = rules
@@ -252,7 +253,8 @@ extension Alamofire.DataRequest {
             }
 
             if (JSONToMap != nil) {
-                if let parsedObject:[T] = Mapper<T>().mapArray(JSONArray: JSONToMap as! [[String : Any]]){
+                let parsedObject = Mapper<T>().mapArray(JSONArray: JSONToMap as! [[String : Any]])
+                if parsedObject.count>0{
                     return .success(parsedObject)
                 }
             }

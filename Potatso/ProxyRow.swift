@@ -11,7 +11,7 @@ import PotatsoModel
 import Eureka
 import Cartography
 
-final class ProxyRow: Row<Proxy, ProxyRowCell>, RowType {
+final class ProxyRow: Row<ProxyRowCell>, RowType {
 
     required init(tag: String?) {
         super.init(tag: tag)
@@ -24,7 +24,7 @@ class ProxyRowCell: Cell<Proxy>, CellType {
 
     let group = ConstraintGroup()
 
-    required init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    required init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
     }

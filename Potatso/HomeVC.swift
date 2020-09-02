@@ -85,7 +85,7 @@ class HomeVC: FormViewController, UINavigationControllerDelegate, HomePresenterP
 
     func updateConnectButton() {
         connectButton.isEnabled = [VPNStatus.on, VPNStatus.off].contains(status)
-        connectButton.setTitleColor(UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControlState())
+        connectButton.setTitleColor(UIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: UIControl.State())
         switch status {
         case .connecting, .disconnecting:
             connectButton.animating = true
@@ -181,7 +181,7 @@ class HomeVC: FormViewController, UINavigationControllerDelegate, HomePresenterP
 
     // MARK: - Private Actions
 
-    func handleConnectButtonPressed() {
+    @objc func handleConnectButtonPressed() {
         if status == .on {
             status = .disconnecting
         }else {
@@ -190,20 +190,20 @@ class HomeVC: FormViewController, UINavigationControllerDelegate, HomePresenterP
         presenter.switchVPN()
     }
 
-    func handleTitleButtonPressed() {
+    @objc func handleTitleButtonPressed() {
         presenter.changeGroupName()
     }
 
     // MARK: - TableView
 
-    func tableView(_ tableView: UITableView, canEditRowAtIndexPath indexPath: IndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == ruleSetSection.index && indexPath.row < presenter.group.ruleSets.count {
             return true
         }
         return false
     }
 
-    func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             do {
                 try defaultRealm.write {
@@ -217,13 +217,13 @@ class HomeVC: FormViewController, UINavigationControllerDelegate, HomePresenterP
         }
     }
 
-    func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
 
     // MARK: - TextRow
 
-    override func textInputDidEndEditing<T>(_ textInput: UITextInput, cell: Cell<T>) {
+    override func textInputDidEndEditing<T>(_ textInput: UITextInput, cell: Cell<T>) where T : Equatable {
         guard let textField = textInput as? UITextField, let dnsString = textField.text, cell.row.tag == kFormDNS else {
             return
         }
@@ -244,8 +244,8 @@ class HomeVC: FormViewController, UINavigationControllerDelegate, HomePresenterP
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        view.bringSubview(toFront: connectButton)
-        tableView?.contentInset = UIEdgeInsetsMake(0, 0, connectButtonHeight, 0)
+        view.bringSubviewToFront(connectButton)
+        tableView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: connectButtonHeight, right: 0)
     }
 
     func setupLayout() {
@@ -265,7 +265,7 @@ class HomeVC: FormViewController, UINavigationControllerDelegate, HomePresenterP
 
     lazy var titleButton: UIButton = {
         let b = UIButton(type: .custom)
-        b.setTitleColor(UIColor.init(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0), for: UIControlState())
+        b.setTitleColor(UIColor.init(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0), for: UIControl.State())
         b.addTarget(self, action: #selector(HomeVC.handleTitleButtonPressed), for: .touchUpInside)
         if let titleLabel = b.titleLabel {
             titleLabel.font = UIFont.boldSystemFont(ofSize: titleLabel.font.pointSize)

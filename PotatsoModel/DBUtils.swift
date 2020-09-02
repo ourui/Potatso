@@ -20,17 +20,17 @@ open class DBUtils {
         return mRealm!
     }
 
-    open static func add(_ object: BaseModel, update: Bool = true, setModified: Bool = true, inRealm realm: Realm? = nil) throws {
+    public static func add(_ object: BaseModel, update: Bool = true, setModified: Bool = true, inRealm realm: Realm? = nil) throws {
         let mRealm = currentRealm(realm)
         mRealm.beginWrite()
         if setModified {
             object.setModified()
         }
-        mRealm.add(object, update: update)
+        mRealm.add(object, update: .all)
         try mRealm.commitWrite()
     }
 
-    open static func add<S: Sequence>(_ objects: S, update: Bool = true, setModified: Bool = true, inRealm realm: Realm? = nil) throws where S.Iterator.Element: BaseModel {
+    public static func add<S: Sequence>(_ objects: S, update: Bool = true, setModified: Bool = true, inRealm realm: Realm? = nil) throws where S.Iterator.Element: BaseModel {
         let mRealm = currentRealm(realm)
         mRealm.beginWrite()
         objects.forEach({
@@ -38,11 +38,11 @@ open class DBUtils {
                 $0.setModified()
             }
         })
-        mRealm.add(objects, update: update)
+        mRealm.add(objects, update: .all)
         try mRealm.commitWrite()
     }
 
-    open static func softDelete<T: BaseModel>(_ id: String, type: T.Type, inRealm realm: Realm? = nil) throws {
+    public static func softDelete<T: BaseModel>(_ id: String, type: T.Type, inRealm realm: Realm? = nil) throws {
         let mRealm = currentRealm(realm)
         guard let object: T = DBUtils.get(id, type: type, inRealm: mRealm) else {
             return
@@ -53,13 +53,13 @@ open class DBUtils {
         try mRealm.commitWrite()
     }
 
-    open static func softDelete<T: BaseModel>(_ ids: [String], type: T.Type, inRealm realm: Realm? = nil) throws {
+    public static func softDelete<T: BaseModel>(_ ids: [String], type: T.Type, inRealm realm: Realm? = nil) throws {
         for id in ids {
             try softDelete(id, type: type, inRealm: realm)
         }
     }
 
-    open static func hardDelete<T: BaseModel>(_ id: String, type: T.Type, inRealm realm: Realm? = nil) throws {
+    public static func hardDelete<T: BaseModel>(_ id: String, type: T.Type, inRealm realm: Realm? = nil) throws {
         let mRealm = currentRealm(realm)
         guard let object: T = DBUtils.get(id, type: type, inRealm: mRealm) else {
             return
@@ -69,13 +69,13 @@ open class DBUtils {
         try mRealm.commitWrite()
     }
 
-    open static func hardDelete<T: BaseModel>(_ ids: [String], type: T.Type, inRealm realm: Realm? = nil) throws {
+    public static func hardDelete<T: BaseModel>(_ ids: [String], type: T.Type, inRealm realm: Realm? = nil) throws {
         for id in ids {
             try hardDelete(id, type: type, inRealm: realm)
         }
     }
 
-    open static func mark<T: BaseModel>(_ id: String, type: T.Type, synced: Bool, inRealm realm: Realm? = nil) throws {
+    public static func mark<T: BaseModel>(_ id: String, type: T.Type, synced: Bool, inRealm realm: Realm? = nil) throws {
         let mRealm = currentRealm(realm)
         guard let object: T = DBUtils.get(id, type: type, inRealm: mRealm) else {
             return
@@ -85,7 +85,7 @@ open class DBUtils {
         try mRealm.commitWrite()
     }
 
-    open static func markAll(syncd: Bool) throws {
+    public static func markAll(syncd: Bool) throws {
         let mRealm = try! Realm()
         mRealm.beginWrite()
         for proxy in mRealm.objects(Proxy.self) {
@@ -121,7 +121,7 @@ extension DBUtils {
             res = res.filter(filter)
         }
         if let sorted = sorted {
-            res = res.sorted(byProperty: sorted)
+            res = res.sorted(byKeyPath: sorted)
         }
         return res
     }
@@ -134,14 +134,14 @@ extension DBUtils {
         }
         var res = mRealm.objects(type).filter(mFilter)
         if let sorted = sorted {
-            res = res.sorted(byProperty: sorted)
+            res = res.sorted(byKeyPath: sorted)
         }
         return res.first
     }
 
     public static func modify<T: BaseModel>(_ type: T.Type, id: String, inRealm realm: Realm? = nil, modifyBlock: ((Realm, T) -> Error?)) throws {
         let mRealm = currentRealm(realm)
-        guard let object: T = DBUtils.get(id, type: type, inRealm: mRealm) as! T? else {
+        guard let object: T = DBUtils.get(id, type: type, inRealm: mRealm) else {
             return
         }
         mRealm.beginWrite()
@@ -171,19 +171,19 @@ extension DBUtils {
         let groups = mRealm.objects(ConfigurationGroup.self).filter(filter).map({ $0 })
         var objects: [BaseModel] = []
         
-        var iterator1: LazyMapIterator<RLMIterator<Proxy>, Proxy>? = nil
+        var iterator1:LazyMapSequence<Results<Proxy>, Proxy>.Iterator? = nil
         iterator1 = proxies.makeIterator()
         iterator1?.forEach({ (tObj) in
             objects.append(tObj as BaseModel)
         })
         
-        var iterator2: LazyMapIterator<RLMIterator<RuleSet>, RuleSet>? = nil
+        var iterator2: LazyMapSequence<Results<RuleSet>, RuleSet>.Iterator? = nil
         iterator2 = rulesets.makeIterator()
         iterator2?.forEach({ (tObj) in
             objects.append(tObj as BaseModel)
         })
         
-        var iterator3: LazyMapIterator<RLMIterator<ConfigurationGroup>, ConfigurationGroup>? = nil
+        var iterator3: LazyMapSequence<Results<ConfigurationGroup>, ConfigurationGroup>.Iterator? = nil
         iterator3 = groups.makeIterator()
         iterator3?.forEach({ (tObj) in
             objects.append(tObj as BaseModel)
@@ -199,19 +199,19 @@ extension DBUtils {
         let groups = mRealm.objects(ConfigurationGroup.self).filter(filter).map({ $0 })
         var objects: [BaseModel] = []
         
-        var iterator1: LazyMapIterator<RLMIterator<Proxy>, Proxy>? = nil
+        var iterator1: LazyMapSequence<Results<Proxy>, Proxy>.Iterator? = nil
         iterator1 = proxies.makeIterator()
         iterator1?.forEach({ (tObj) in
             objects.append(tObj as BaseModel)
         })
     
-        var iterator2: LazyMapIterator<RLMIterator<RuleSet>, RuleSet>? = nil
+        var iterator2: LazyMapSequence<Results<RuleSet>, RuleSet>.Iterator? = nil
         iterator2 = rulesets.makeIterator()
         iterator2?.forEach({ (tObj) in
             objects.append(tObj as BaseModel)
         })
         
-        var iterator3: LazyMapIterator<RLMIterator<ConfigurationGroup>, ConfigurationGroup>? = nil
+        var iterator3: LazyMapSequence<Results<ConfigurationGroup>, ConfigurationGroup>.Iterator? = nil
         iterator3 = groups.makeIterator()
         iterator3?.forEach({ (tObj) in
             objects.append(tObj as BaseModel)
