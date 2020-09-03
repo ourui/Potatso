@@ -87,6 +87,8 @@ open class Manager {
             self.vpnStatus = .disconnecting
         case .disconnected, .invalid:
             self.vpnStatus = .off
+        @unknown default:
+            self.vpnStatus = .off
         }
     }
 
@@ -183,7 +185,7 @@ open class Manager {
             }
             let uuid = group.uuid
             let name = group.name
-            DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async(execute: { 
+            DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: { 
                 self.setDefaultConfigGroup(uuid, name: name)
             })
             return group
@@ -237,7 +239,7 @@ extension Manager {
     }
     
     func generateSocksConfig() throws {
-        /*
+        #if os(macOS)
         let root = NSXMLElement.element(withName: "antinatconfig") as! NSXMLElement
         let interface = NSXMLElement.element(withName: "interface", children: nil, attributes: [NSXMLNode.attribute(withName: "value", stringValue: "127.0.0.1") as! DDXMLNode]) as! NSXMLElement
         root.addChild(interface)
@@ -277,14 +279,14 @@ extension Manager {
         
         let socksConf = root.xmlString
         try socksConf.write(to: Potatso.sharedSocksConfUrl(), atomically: true, encoding: String.Encoding.utf8)
-         */
+        #endif
     }
     
     func generateShadowsocksConfig() throws {
         let confURL = Potatso.sharedProxyConfUrl()
         var content = ""
         if let upstreamProxy = upstreamProxy, upstreamProxy.type == .Shadowsocks || upstreamProxy.type == .ShadowsocksR {
-            var arr = ["host": upstreamProxy.host, "port": upstreamProxy.port, "password": upstreamProxy.password ?? "", "authscheme": upstreamProxy.authscheme ?? "", "ota": upstreamProxy.ota, "protocol": upstreamProxy.ssrProtocol ?? "", "obfs": upstreamProxy.ssrObfs ?? "", "obfs_param": upstreamProxy.ssrObfsParam ?? ""] as [String : Any]
+            let arr = ["host": upstreamProxy.host, "port": upstreamProxy.port, "password": upstreamProxy.password ?? "", "authscheme": upstreamProxy.authscheme ?? "", "ota": upstreamProxy.ota, "protocol": upstreamProxy.ssrProtocol ?? "", "obfs": upstreamProxy.ssrObfs ?? "", "obfs_param": upstreamProxy.ssrObfsParam ?? ""] as [String : Any]
             
             do {
                 //let data = try JSONSerialization.data(withJSONObject: arr, options: .prettyPrinted)
