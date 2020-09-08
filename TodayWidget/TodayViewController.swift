@@ -95,7 +95,7 @@ class TodayViewController: UIViewController, NCWidgetProviding, UITableViewDataS
         sock.disconnect()
     }
 
-    func socketDidDisconnect(_ sock: GCDAsyncSocket!, withError err: NSError!) {
+    func socketDidDisconnect(_ sock: GCDAsyncSocket!, withError err: Error?) {
         updateStatus(false)
     }
 

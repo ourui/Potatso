@@ -113,9 +113,13 @@
 }
 
 - (void)startProxies {
-    [self startShadowsocks];
+    /*
+     * fuck 花了两天找不能启动vpn的原因, 不是因为证书问题, 而是下面注释掉的两个函数会导致进程挂掉。具体还得仔细分析
+     * 注释掉后可正常启动vpn抓包,但是不能进行 shadowsocks 和 Socks代理
+     */
+    //[self startSocksProxy];
+    //[self startShadowsocks];
     [self startHttpProxy];
-    [self startSocksProxy];
 }
 
 - (void)syncStartProxy: (NSString *)name completion: (void(^)(dispatch_group_t g, NSError **proxyError))handler {

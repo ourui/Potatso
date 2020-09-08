@@ -406,8 +406,8 @@ extension Manager {
                 }
                 if manager.connection.status == .disconnected || manager.connection.status == .invalid {
                     do {
-                        try manager.connection.startVPNTunnel(options: options)
                         self.addVPNStatusObserver()
+                        try manager.connection.startVPNTunnel(options: options)
                         complete?(manager, nil)
                     }catch {
                         complete?(nil, error)
